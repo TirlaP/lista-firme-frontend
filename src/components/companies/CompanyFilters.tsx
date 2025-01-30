@@ -5,6 +5,7 @@ import { useCAENSearch } from "@/hooks/useCAENSearch";
 import { useLocationSearch } from "@/hooks/useLocationSearch";
 import { useFiltersStore } from "@/store/filtersStore";
 import { useState } from "react";
+import { SortSelector } from "./SortSelector";
 
 type FilterSection = "basic" | "advanced";
 
@@ -79,7 +80,7 @@ export const CompanyFilters = () => {
 
 	return (
 		<div className="h-[calc(100vh-4rem)] overflow-y-auto">
-			<div className="space-y-6 p-4">
+			<div className="space-y-6">
 				{/* Navigation */}
 				<div className="flex space-x-2 border-b border-gray-200 sticky top-0 bg-white z-10">
 					{renderSectionButton("basic", "Basic")}
@@ -142,7 +143,10 @@ export const CompanyFilters = () => {
 				{/* Advanced Filters */}
 				<div className={activeSection === "advanced" ? "space-y-6" : "hidden"}>
 					<div className="space-y-4">
-						<h3 className="text-sm font-medium text-gray-700">
+						<h3 className="text-sm font-medium text-gray-700">Sort Order</h3>
+						<SortSelector />
+
+						<h3 className="text-sm font-medium text-gray-700 mt-6">
 							Contact Information
 						</h3>
 						<div className="grid gap-4">

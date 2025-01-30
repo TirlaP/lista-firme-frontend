@@ -1,4 +1,3 @@
-// src/components/companies/CompanyTableRow.tsx
 import { Tooltip } from "@/components/ui/Tooltip";
 import { Company } from "@/types/company.types";
 import { Info } from "lucide-react";
@@ -22,20 +21,39 @@ export const CompanyTableRow = ({
 		navigate(`/companies/${company.cui}`);
 	};
 
+	// Get location data from either adresa or adresa_anaf
+	const location = {
+		judet:
+			company.adresa?.judet ||
+			company.adresa_anaf?.sediu_social?.sdenumire_Judet ||
+			"",
+		localitate:
+			company.adresa?.localitate ||
+			company.adresa_anaf?.sediu_social?.sdenumire_Localitate ||
+			"",
+	};
+
+	// Get contact info
+	const contactInfo = {
+		telefon: company.contact?.telefon || company.date_generale?.telefon || "",
+		email: company.contact?.email || company.date_generale?.email || "",
+		website: company.contact?.website || company.date_generale?.website || "",
+	};
+
 	return (
 		<tr
 			className="hover:bg-gray-50 transition-colors cursor-pointer"
-			onMouseEnter={() => onHover(company.nume)}
+			onMouseEnter={() => onHover(company.denumire || company.nume)}
 			onMouseLeave={() => onHover(null)}
 			onClick={handleRowClick}
 		>
 			<td className="px-4 py-4">
 				<div className="flex flex-col space-y-1">
 					<span className="text-sm font-medium text-gray-900">
-						{company.nume}
+						{company.denumire || company.nume}
 					</span>
 					<span className="text-xs text-gray-500 line-clamp-2">
-						{company.adresa_completa}
+						{company.adresa_completa || company.date_generale?.adresa}
 					</span>
 					<span className="md:hidden text-xs text-gray-400">
 						CUI: {company.cui} | CAEN: {company.cod_CAEN}
@@ -48,7 +66,7 @@ export const CompanyTableRow = ({
 					<div className="flex flex-col">
 						<span className="text-sm text-gray-900">{company.cod_CAEN}</span>
 						<span className="text-xs text-gray-500">
-							{company.inregistrare?.numar}
+							{company.inregistrare?.numar || company.date_generale?.nrRegCom}
 						</span>
 					</div>
 					{company.caen && (
@@ -73,31 +91,29 @@ export const CompanyTableRow = ({
 
 			<td className="hidden lg:table-cell px-4 py-4">
 				<div className="flex flex-col">
-					<span className="text-sm text-gray-900">{company.adresa.judet}</span>
-					<span className="text-xs text-gray-500">
-						{company.adresa.localitate}
-					</span>
+					<span className="text-sm text-gray-900">{location.judet}</span>
+					<span className="text-xs text-gray-500">{location.localitate}</span>
 				</div>
 			</td>
 
 			<td className="hidden xl:table-cell px-4 py-4">
 				<div className="flex flex-col space-y-1">
-					{company.contact.telefon && (
+					{contactInfo.telefon && (
 						<a
-							href={`tel:${company.contact.telefon}`}
+							href={`tel:${contactInfo.telefon}`}
 							className="text-sm text-blue-600 hover:text-blue-800"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{company.contact.telefon}
+							{contactInfo.telefon}
 						</a>
 					)}
-					{company.contact.email && (
+					{contactInfo.email && (
 						<a
-							href={`mailto:${company.contact.email}`}
+							href={`mailto:${contactInfo.email}`}
 							className="text-sm text-blue-600 hover:text-blue-800"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{company.contact.email}
+							{contactInfo.email}
 						</a>
 					)}
 				</div>
@@ -105,9 +121,9 @@ export const CompanyTableRow = ({
 
 			<td className="px-4 py-4">
 				<div className="flex items-center space-x-3">
-					{company.contact.website && (
+					{contactInfo.website && (
 						<a
-							href={company.contact.website}
+							href={contactInfo.website}
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-sm text-blue-600 hover:text-blue-800"
@@ -122,9 +138,21 @@ export const CompanyTableRow = ({
 								<div className="font-medium border-b border-gray-700 pb-1">
 									Company Details
 								</div>
-								<p>Registration: {company.inregistrare?.stare}</p>
-								<p>Type: {company.tip_firma?.forma_juridica}</p>
-								<p>Fiscal: {company.inregistrare?.organ_fiscal}</p>
+								<p>
+									Registration:{" "}
+									{company.date_generale?.stare_inregistrare ||
+										company.inregistrare?.stare}
+								</p>
+								<p>
+									Type:{" "}
+									{company.date_generale?.forma_juridica ||
+										company.tip_firma?.forma_juridica}
+								</p>
+								<p>
+									Fiscal:{" "}
+									{company.date_generale?.organFiscalCompetent ||
+										company.inregistrare?.organ_fiscal}
+								</p>
 							</div>
 						}
 					>
@@ -144,4 +172,3 @@ export const CompanyTableRow = ({
 		</tr>
 	);
 };
-

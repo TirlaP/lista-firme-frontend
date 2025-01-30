@@ -4,7 +4,7 @@ export interface CompanyFilters {
 	oras?: string;
 	hasWebsite?: string;
 	hasContact?: string;
+	sortBy?: string;
 	page?: number;
 	limit?: number;
 }
-

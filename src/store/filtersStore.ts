@@ -13,6 +13,7 @@ interface FiltersState {
 const DEFAULT_FILTERS: CompanyFilters = {
 	page: 1,
 	limit: 10,
+	sortBy: "registration_date_desc",
 };
 
 export const useFiltersStore = create<FiltersState>((set) => ({

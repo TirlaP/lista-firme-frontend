@@ -2,14 +2,14 @@ import { CompanyTable } from "@/components/companies/CompanyTable";
 import { ExportButton } from "@/components/companies/ExportButton";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { useCompanies } from "@/hooks/useCompanies";
-import { useFiltersStore } from "@/store/filtersStore";
+import { useLatestCompanies } from "@/hooks/useLatestCompanies";
+import { useLatestCompaniesStore } from "@/store/latestCompaniesStore";
 import { useEffect } from "react";
 
-export const CompaniesPage = () => {
-	const companiesQuery = useCompanies();
-	const { data, isLoading } = companiesQuery;
-	const { filters, setFilter } = useFiltersStore();
+export const LatestCompaniesPage = () => {
+	const { filters, setFilter } = useLatestCompaniesStore();
+	const latestCompaniesQuery = useLatestCompanies();
+	const { data, isLoading } = latestCompaniesQuery;
 
 	const totalPages = data?.totalPages || 1;
 	const currentPage = filters.page || 1;
@@ -26,8 +26,31 @@ export const CompaniesPage = () => {
 		}
 	};
 
+	const getTimeRangeText = () => {
+		switch (filters.timeRange) {
+			case "today":
+				return "today";
+			case "yesterday":
+				return "yesterday";
+			case "last7days":
+				return "in the last 7 days";
+			case "last30days":
+				return "in the last 30 days";
+			case "custom":
+				return "in selected period";
+			default:
+				return "in selected period";
+		}
+	};
+
 	const formatNumber = (num: number) => {
 		return num.toLocaleString();
+	};
+
+	const exportFilters = {
+		timeRange: filters.timeRange,
+		customStartDate: filters.customStartDate,
+		customEndDate: filters.customEndDate,
 	};
 
 	return (
@@ -37,16 +60,14 @@ export const CompaniesPage = () => {
 					<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 						<div className="space-y-1">
 							<h1 className="text-xl font-semibold text-gray-900">
-								Company Directory
+								Latest Companies
 							</h1>
 							<p className="text-sm text-gray-500">
 								{!isLoading && data ? (
 									<>
 										Showing {formatNumber(data.results.length)} of{" "}
-										{formatNumber(data.totalResults)} companies
-										{Object.keys(filters).some(
-											(key) => key !== "page" && key !== "limit" && filters[key]
-										) && " (filtered)"}
+										{formatNumber(data.totalResults)} companies registered{" "}
+										{getTimeRangeText()}
 									</>
 								) : (
 									"Loading companies..."
@@ -56,14 +77,11 @@ export const CompaniesPage = () => {
 
 						<div className="flex items-center gap-4">
 							<ExportButton
-								type="regular"
+								type="latest"
 								filters={{
-									cod_CAEN: filters.cod_CAEN,
-									judet: filters.judet,
-									oras: filters.oras,
-									hasWebsite: filters.hasWebsite,
-									hasContact: filters.hasContact,
-									sortBy: filters.sortBy,
+									timeRange: filters.timeRange,
+									customStartDate: filters.customStartDate,
+									customEndDate: filters.customEndDate,
 								}}
 							/>
 
@@ -128,8 +146,8 @@ export const CompaniesPage = () => {
 
 			<div className="flex-1 min-h-0 bg-white rounded-lg border border-gray-200">
 				<CompanyTable
-					queryResult={companiesQuery}
-					emptyMessage="No companies found matching your filters."
+					queryResult={latestCompaniesQuery}
+					emptyMessage="No companies found in the selected time range."
 				/>
 			</div>
 		</div>

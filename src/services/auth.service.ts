@@ -1,4 +1,6 @@
-import { AuthResponse, LoginCredentials } from "@/types/auth.types";
+// src/services/auth.service.ts
+
+import { AuthResponse, LoginCredentials, User } from "@/types/auth.types";
 import { apiClient } from "@/utils/axios";
 
 export const authService = {
@@ -20,9 +22,23 @@ export const authService = {
 		localStorage.removeItem("refreshToken");
 	},
 
-	async getCurrentUser() {
-		const { data } = await apiClient.get("/auth/me");
+	async getCurrentUser(): Promise<User> {
+		const { data } = await apiClient.get<User>("/auth/me");
 		return data;
 	},
-};
 
+	async refreshToken(): Promise<string> {
+		const refreshToken = localStorage.getItem("refreshToken");
+		if (!refreshToken) throw new Error("No refresh token available");
+
+		const { data } = await apiClient.post<{ token: string }>(
+			"/auth/refresh-token",
+			{
+				refreshToken,
+			}
+		);
+
+		localStorage.setItem("accessToken", data.token);
+		return data.token;
+	},
+};

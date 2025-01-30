@@ -1,10 +1,18 @@
-// src/components/companies/CompanyTable.tsx
-import { useCompanies } from "@/hooks/useCompanies";
+import { Company, CompanyResponse } from "@/types/company.types";
+import { UseQueryResult } from "@tanstack/react-query";
 import { useState } from "react";
 import { CompanyTableRow } from "./CompanyTableRow";
 
-export const CompanyTable = () => {
-	const { data, isLoading, isFetching } = useCompanies();
+interface CompanyTableProps {
+	queryResult: UseQueryResult<CompanyResponse>;
+	emptyMessage?: string;
+}
+
+export const CompanyTable = ({
+	queryResult,
+	emptyMessage = "No companies found matching your criteria.",
+}: CompanyTableProps) => {
+	const { data, isLoading, isFetching } = queryResult;
 	const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
 	if (isLoading) {
@@ -48,7 +56,7 @@ export const CompanyTable = () => {
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200 bg-white">
-						{data?.results.map((company) => (
+						{data?.results.map((company: Company) => (
 							<CompanyTableRow
 								key={company.cui}
 								company={company}
@@ -59,11 +67,9 @@ export const CompanyTable = () => {
 					</tbody>
 				</table>
 
-				{data?.results.length === 0 && (
+				{(!data?.results || data.results.length === 0) && (
 					<div className="flex items-center justify-center h-full min-h-[200px]">
-						<p className="text-gray-500">
-							No companies found matching your criteria.
-						</p>
+						<p className="text-gray-500">{emptyMessage}</p>
 					</div>
 				)}
 			</div>
