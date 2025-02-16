@@ -1,5 +1,5 @@
 import { Tooltip } from "@/components/ui/Tooltip";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Company } from "@/types/company.types";
 import { Building2, Globe, Info, Mail, MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
