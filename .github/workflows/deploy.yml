@@ -28,4 +28,4 @@ jobs:
         username: ${{ secrets.CPANEL_USERNAME }}
         password: ${{ secrets.CPANEL_PASSWORD }}
         local-dir: ./dist/ 
-        server-dir: /home2/mediades/firme.mediadesignro.ro/public_html/
+        server-dir: /firme.mediadesignro.ro/public_html/
