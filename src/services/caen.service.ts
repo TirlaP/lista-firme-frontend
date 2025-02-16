@@ -1,5 +1,5 @@
 import { CAENInfo } from "@/types/company.types";
-import { apiClient } from "@/utils/axios";
+import { apiClient } from "@/utils/apiClient";
 
 class CAENService {
 	async searchCAENCodes(query: string): Promise<CAENInfo[]> {

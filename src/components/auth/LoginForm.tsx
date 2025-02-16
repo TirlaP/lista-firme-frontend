@@ -1,71 +1,97 @@
-// src/components/auth/LoginForm.tsx
-
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/hooks/useAuth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Form, Input, Button, Checkbox, Divider } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { z } from "zod";
+import { Mail, Lock } from "lucide-react";
 
-const loginSchema = z.object({
-	email: z.string().min(1, "Email is required").email("Invalid email"),
-	password: z.string().min(6, "Password must be at least 6 characters"),
-});
+interface LoginFormData {
+  email: string;
+  password: string;
+  remember?: boolean;
+}
 
-type LoginFormData = z.infer<typeof loginSchema>;
+export const LoginForm = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
 
-export const LoginForm: React.FC = () => {
-	const { login } = useAuth();
-	const navigate = useNavigate();
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitting },
-	} = useForm<LoginFormData>({
-		resolver: zodResolver(loginSchema),
-	});
+  const onSubmit = async (values: LoginFormData) => {
+    try {
+      await login(values.email, values.password);
+      navigate("/companies");
+      toast.success("Welcome back!");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Login failed. Please check your credentials."
+      );
+    }
+  };
 
-	const onSubmit = async (data: LoginFormData) => {
-		try {
-			await login(data.email, data.password);
-			navigate("/companies");
-			toast.success("Successfully logged in!");
-		} catch (error) {
-			toast.error("Login failed. Please check your credentials.");
-		}
-	};
+  const renderIcon = (icon: React.ReactNode) => (
+    <span className="text-gray-400">{icon}</span>
+  );
 
-	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
-			<div className="rounded-md shadow-sm space-y-4">
-				<Input
-					label="Email address"
-					type="email"
-					autoComplete="email"
-					required
-					{...register("email")}
-					error={errors.email?.message}
-				/>
-				<Input
-					label="Password"
-					type="password"
-					autoComplete="current-password"
-					required
-					{...register("password")}
-					error={errors.password?.message}
-				/>
-			</div>
+  return (
+    <Form
+      form={form}
+      name="login"
+      onFinish={onSubmit}
+      autoComplete="off"
+      size="large"
+      layout="vertical"
+      requiredMark={false}
+    >
+      <Form.Item
+        name="email"
+        rules={[
+          { required: true, message: "Please input your email!" },
+          { type: "email", message: "Please enter a valid email!" },
+        ]}
+      >
+        <Input 
+          prefix={renderIcon(<Mail size={18} />)}
+          placeholder="Email address" 
+        />
+      </Form.Item>
 
-			<Button
-				type="submit"
-				className="w-full"
-				size="lg"
-				isLoading={isSubmitting}
-			>
-				Sign in
-			</Button>
-		</form>
-	);
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: "Please input your password!" }]}
+      >
+        <Input.Password
+          prefix={renderIcon(<Lock size={18} />)}
+          placeholder="Password"
+        />
+      </Form.Item>
+
+      <Form.Item>
+        <div className="flex justify-between items-center">
+          <Form.Item name="remember" valuePropName="checked" noStyle>
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
+          <Link 
+            to="/forgot-password"
+            className="text-blue-600 hover:text-blue-500"
+          >
+            Forgot password?
+          </Link>
+        </div>
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" block>
+          Sign in
+        </Button>
+      </Form.Item>
+
+      <Divider plain>
+        <span className="text-gray-500">New to Lista Firme?</span>
+      </Divider>
+
+      <Link to="/signup">
+        <Button block>Create an account</Button>
+      </Link>
+    </Form>
+  );
 };

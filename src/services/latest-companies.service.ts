@@ -3,7 +3,7 @@ import {
 	LatestCompanyResponse,
 	LatestCompanyStats,
 } from "@/types/latest-companies.types";
-import { apiClient } from "@/utils/axios";
+import { apiClient } from "@/utils/apiClient";
 
 class LatestCompaniesService {
 	async getLatestCompanies(

@@ -4,7 +4,7 @@ import {
 	CompanyFilters,
 	CompanyResponse,
 } from "@/types/company.types";
-import { apiClient } from "@/utils/axios";
+import { apiClient } from "@/utils/apiClient";
 
 class CompanyService {
 	async getCompanies(filters: CompanyFilters): Promise<CompanyResponse> {

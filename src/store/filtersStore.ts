@@ -1,30 +1,32 @@
-import { CompanyFilters } from "@/types/filters.types";
 import { create } from "zustand";
 
+export interface CompanyFilters {
+  cod_CAEN?: string;
+  judet?: string;
+  oras?: string;
+  hasWebsite?: string;
+  hasContact?: string;
+  sortBy?: string;
+}
+
 interface FiltersState {
-	filters: CompanyFilters;
-	setFilter: <K extends keyof CompanyFilters>(
-		key: K,
-		value: CompanyFilters[K] | undefined
-	) => void;
-	resetFilters: () => void;
+  filters: CompanyFilters;
+  setFilter: <K extends keyof CompanyFilters>(key: K, value: CompanyFilters[K]) => void;
+  resetFilters: () => void;
 }
 
 const DEFAULT_FILTERS: CompanyFilters = {
-	page: 1,
-	limit: 10,
-	sortBy: "registration_date_desc",
+  sortBy: "registration_date_desc",
 };
 
 export const useFiltersStore = create<FiltersState>((set) => ({
-	filters: DEFAULT_FILTERS,
-	setFilter: (key, value) =>
-		set((state) => ({
-			filters: {
-				...state.filters,
-				[key]: value,
-				...(key !== "page" && { page: 1 }),
-			},
-		})),
-	resetFilters: () => set({ filters: DEFAULT_FILTERS }),
+  filters: DEFAULT_FILTERS,
+  setFilter: (key, value) =>
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        [key]: value,
+      },
+    })),
+  resetFilters: () => set({ filters: DEFAULT_FILTERS }),
 }));

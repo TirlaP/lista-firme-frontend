@@ -3,7 +3,7 @@ import {
 	ExportFormat,
 	LatestExportFilters,
 } from "@/types/export.types";
-import { apiClient } from "@/utils/axios";
+import { apiClient } from "@/utils/apiClient";
 
 class ExportService {
 	async exportCompanies(filters: ExportFilters): Promise<void> {

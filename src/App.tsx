@@ -5,6 +5,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppRoutes } from "./routes";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "./apollo/client";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -17,6 +19,7 @@ const queryClient = new QueryClient({
 
 export const App = () => {
 	return (
+    <ApolloProvider client={client}>
 		<QueryClientProvider client={queryClient}>
 			<Router>
 				<AppRoutes />
@@ -24,6 +27,7 @@ export const App = () => {
 			</Router>
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
+		</ApolloProvider>
 	);
 };
 
