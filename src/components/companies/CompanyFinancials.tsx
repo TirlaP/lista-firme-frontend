@@ -1,5 +1,5 @@
 import { Company } from "@/types/company.types";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { 
   Activity,
   AlertCircle,
