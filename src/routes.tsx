@@ -1,20 +1,36 @@
-import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthLayout } from "@/components/layout/AuthLayout";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { SubscriptionGuard } from "@/components/subscription/SubscriptionGuard";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { SignupPage } from "@/pages/auth/SignupPage";
-import { OnboardingPage } from "@/pages/onboarding/OnboardingPage";
-import { PaymentReturnPage } from "@/pages/payment/PaymentReturnPage";
 import { CompaniesPage } from "@/pages/companies/CompaniesPage";
 import { CompanyDetailsPage } from "@/pages/companies/CompanyDetailsPage";
 import { LatestCompaniesPage } from "@/pages/companies/LatestCompaniesPage";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { OnboardingPage } from "@/pages/onboarding/OnboardingPage";
+import { PaymentReturnPage } from "@/pages/payment/PaymentReturnPage";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { SubscriptionPlansPage } from "./pages/payment/SubscriptionPlanPage";
-import { SubscriptionGuard } from "@/components/subscription/SubscriptionGuard";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <Navigate to="/login" />;
+  const { isAuthenticated, isInitialized } = useAuth();
+  const location = useLocation();
+  
+  // Show loading state while auth is initializing
+  if (!isInitialized) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  
+  // Only redirect once we know for sure the user isn't authenticated
+  if (!isAuthenticated) {
+    // Save the location they were trying to go to for redirecting after login
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+  
   return <>{children}</>;
 };
 
@@ -31,12 +47,40 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Main App Routes */}
-      <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-        <Route index element={<Navigate to="/companies" replace />} />
-        <Route path="companies">
-          <Route index element={<SubscriptionGuard><CompaniesPage /></SubscriptionGuard>} />
-          <Route path="latest" element={<SubscriptionGuard><LatestCompaniesPage /></SubscriptionGuard>} />
-          <Route path=":cui" element={<SubscriptionGuard><CompanyDetailsPage /></SubscriptionGuard>} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="/firme" replace />} />
+        <Route path="firme">
+          <Route
+            index
+            element={
+              <SubscriptionGuard>
+                <CompaniesPage />
+              </SubscriptionGuard>
+            }
+          />
+          <Route
+            path="latest"
+            element={
+              <SubscriptionGuard requiredFeature={null}>
+                <LatestCompaniesPage />
+              </SubscriptionGuard>
+            }
+          />
+          <Route
+            path=":cui"
+            element={
+              <SubscriptionGuard>
+                <CompanyDetailsPage />
+              </SubscriptionGuard>
+            }
+          />
         </Route>
       </Route>
     </Routes>

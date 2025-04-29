@@ -104,16 +104,26 @@ export interface CompanySortInput {
 }
 
 export enum CompanySortField {
-  REGISTRATION_DATE = 'REGISTRATION_DATE',
-  CUI = 'CUI',
-  NUME = 'NUME'
+  REGISTRATION_DATE = "REGISTRATION_DATE",
+  CUI = "CUI",
+  NUME = "NUME",
 }
 
 export enum SortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC'
+  ASC = "ASC",
+  DESC = "DESC",
 }
 
 export type GetCompaniesQueryResult = {
   companies: CompanyConnection;
 };
+
+export interface CAENInfo {
+  _id: string;
+  code: string;
+  name: string;
+  section_code: string;
+  section_name: string;
+  division_code: string;
+  division_name: string;
+}

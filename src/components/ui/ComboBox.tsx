@@ -1,8 +1,14 @@
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/Popover";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import * as React from "react";
 
-interface ComboBoxOption {
+export interface ComboBoxOption {
   value: string;
   label: string;
   details?: {
@@ -19,12 +25,11 @@ interface ComboBoxProps {
   onSearch?: (query: string) => void;
   onFocus?: () => void;
   placeholder?: string;
-  label?: string;
-  className?: string;
   disabled?: boolean;
   loading?: boolean;
   error?: string;
   displayDetails?: boolean;
+  className?: string;
 }
 
 export const ComboBox = ({
@@ -33,207 +38,141 @@ export const ComboBox = ({
   options = [],
   onSearch,
   onFocus,
-  placeholder = "Select...",
-  label,
-  className = "",
+  placeholder = "Selectează...",
   disabled = false,
   loading = false,
   error,
   displayDetails = false,
+  className,
 }: ComboBoxProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
 
-  // Get selected option
-  const selectedOption = options.find(option => option.value === value);
+  // Find the selected option
+  const selectedOption = options.find((option) => option.value === value);
 
-  // Filter options based on search term if no external search is provided
-  const displayedOptions = onSearch 
-    ? options 
-    : options.filter(option => 
-        option.label.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-  // Handle input change
+  // Handle input change directly
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    setSearchTerm(newValue);
+    setInputValue(newValue);
+
     if (onSearch) {
       onSearch(newValue);
     }
   };
 
   // Handle option selection
-  const handleSelectOption = (option: ComboBoxOption) => {
-    onChange(option.value);
-    setSearchTerm("");
-    setIsOpen(false);
-    inputRef.current?.blur();
+  const handleOptionSelect = (selectedValue: string) => {
+    onChange(selectedValue);
+    setOpen(false);
   };
 
-  // Handle input focus
-  const handleFocus = () => {
-    if (!disabled) {
-      setIsOpen(true);
-      onFocus?.();
-    }
-  };
+  // When the popover opens, initialize the search
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
 
-  // Handle keyboard navigation
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (disabled) return;
-
-    switch (event.key) {
-      case "ArrowDown":
-        event.preventDefault();
-        if (!isOpen) {
-          setIsOpen(true);
-        } else {
-          setHighlightedIndex(prev => 
-            prev < displayedOptions.length - 1 ? prev + 1 : prev
-          );
+    if (newOpen) {
+      // Focus the input when opened
+      setTimeout(() => {
+        const input = document.getElementById("combobox-input");
+        if (input) {
+          input.focus();
         }
-        break;
+      }, 100);
 
-      case "ArrowUp":
-        event.preventDefault();
-        if (isOpen) {
-          setHighlightedIndex(prev => (prev > 0 ? prev - 1 : prev));
-        }
-        break;
-
-      case "Enter":
-        event.preventDefault();
-        if (isOpen && displayedOptions[highlightedIndex]) {
-          handleSelectOption(displayedOptions[highlightedIndex]);
-        }
-        break;
-
-      case "Escape":
-        event.preventDefault();
-        setIsOpen(false);
-        setSearchTerm("");
-        break;
-
-      case "Tab":
-        if (isOpen) {
-          setIsOpen(false);
-          setSearchTerm("");
-        }
-        break;
-    }
-  };
-
-  // Handle click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-        setSearchTerm("");
+      if (onFocus) {
+        onFocus();
       }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Reset highlight index when options change
-  useEffect(() => {
-    setHighlightedIndex(0);
-  }, [displayedOptions.length]);
+    } else {
+      // Clear search when closed
+      setInputValue("");
+    }
+  };
 
   return (
-    <div className="relative space-y-1" ref={containerRef}>
-      {label && (
-        <label className="text-sm font-medium text-gray-700">{label}</label>
-      )}
-      
-      <div className="relative">
-        <input
-          ref={inputRef}
-          type="text"
-          className={cn(
-            "w-full rounded-md border bg-white px-3 py-2 text-sm",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500",
-            {
-              "border-red-300": error,
-              "border-gray-200": !error,
-              "opacity-50 cursor-not-allowed": disabled,
-            },
-            className
-          )}
-          value={searchTerm || selectedOption?.label || ""}
-          onChange={handleInputChange}
-          onFocus={handleFocus}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={disabled}
-        />
+    <div className="relative w-full">
+      <Popover open={open} onOpenChange={handleOpenChange}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn(
+              "w-full justify-between font-normal bg-white",
+              disabled && "opacity-50 cursor-not-allowed",
+              className,
+            )}
+            disabled={disabled}
+          >
+            {selectedOption ? (
+              <span className="truncate">{selectedOption.label}</span>
+            ) : (
+              <span className="text-gray-500">{placeholder}</span>
+            )}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0" align="start">
+          <div className="flex border-b">
+            <input
+              id="combobox-input"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder={placeholder}
+              className="flex w-full px-3 py-2 text-sm bg-transparent outline-none"
+              autoComplete="off"
+            />
+          </div>
 
-        <button
-          type="button"
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-          className={cn(
-            "absolute inset-y-0 right-0 flex items-center pr-2",
-            disabled && "cursor-not-allowed"
-          )}
-          disabled={disabled}
-        >
-          <ChevronsUpDown className="h-4 w-4 text-gray-400" />
-        </button>
-      </div>
-
-      {error && <p className="text-sm text-red-500">{error}</p>}
-
-      {isOpen && !disabled && (
-        <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-lg">
-          {loading ? (
-            <div className="flex items-center justify-center py-2 text-xs text-gray-500">
-              Loading...
-            </div>
-          ) : displayedOptions.length === 0 ? (
-            <div className="py-2 text-center text-xs text-gray-500">
-              {searchTerm ? "No matches found" : "No options available"}
-            </div>
-          ) : (
-            displayedOptions.map((option, index) => (
-              <div
-                key={option.value}
-                onClick={() => handleSelectOption(option)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                className={cn(
-                  "flex items-center px-2 py-1.5 text-sm cursor-pointer",
-                  {
-                    "bg-blue-50": highlightedIndex === index,
-                    "bg-blue-100": option.value === value,
-                  }
-                )}
-              >
-                <span className="w-4">
-                  {option.value === value && (
-                    <Check className="h-4 w-4 text-blue-600" />
-                  )}
-                </span>
-                <div className="ml-2">
-                  <div className="font-medium">{option.label}</div>
-                  {displayDetails && option.details && (
-                    <div className="text-xs text-gray-500">
-                      {Object.entries(option.details).map(
-                        ([key, value]) => value && (
-                          <div key={key}>{value}</div>
-                        )
+          <div className="max-h-60 overflow-y-auto">
+            {loading ? (
+              <div className="flex items-center justify-center p-4">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <span className="text-sm">Se încarcă...</span>
+              </div>
+            ) : Array.isArray(options) && options.length > 0 ? (
+              <div className="py-1">
+                {options.map((option) => (
+                  <div
+                    key={option.value}
+                    className={cn(
+                      "flex flex-col cursor-pointer px-3 py-2 hover:bg-blue-50",
+                      value === option.value && "bg-blue-100",
+                    )}
+                    onClick={() => handleOptionSelect(option.value)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">
+                        {option.label}
+                      </span>
+                      {value === option.value && (
+                        <Check className="h-4 w-4 text-blue-600" />
                       )}
                     </div>
-                  )}
-                </div>
+
+                    {displayDetails &&
+                      option.details &&
+                      Object.values(option.details).some(Boolean) && (
+                        <div className="ml-6 mt-1 text-xs text-gray-500">
+                          {Object.entries(option.details).map(
+                            ([key, value]) =>
+                              value && <div key={key}>{value}</div>,
+                          )}
+                        </div>
+                      )}
+                  </div>
+                ))}
               </div>
-            ))
-          )}
-        </div>
-      )}
+            ) : (
+              <div className="py-6 text-center">
+                <p className="text-sm text-gray-500">
+                  Nu a fost găsit niciun rezultat.
+                </p>
+              </div>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };

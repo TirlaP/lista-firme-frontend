@@ -1,7 +1,7 @@
-import { SubscriptionPlan } from "@/types/subscription.types";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import type { SubscriptionPlan } from "@/types/subscription.types";
+import { AlertCircle, CheckCircle } from "lucide-react";
 
 interface SubscriptionCardProps {
   plan: SubscriptionPlan;

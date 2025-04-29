@@ -1,8 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { CreditCard, Calendar, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
+import { AlertTriangle, Calendar, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const SubscriptionDetails = () => {
@@ -30,8 +30,10 @@ export const SubscriptionDetails = () => {
     }
   };
 
-  const isExpiringSoon = subscription.endDate && 
-    new Date(subscription.endDate).getTime() - new Date().getTime() < 7 * 24 * 60 * 60 * 1000;
+  const isExpiringSoon =
+    subscription.endDate &&
+    new Date(subscription.endDate).getTime() - new Date().getTime() <
+      7 * 24 * 60 * 60 * 1000;
 
   return (
     <Card className="p-6">
@@ -40,14 +42,10 @@ export const SubscriptionDetails = () => {
           <h3 className="text-xl font-bold mb-2">
             {subscription.plan.name} Plan
           </h3>
-          <p className="text-gray-600">
-            {subscription.billingCycle} billing
-          </p>
+          <p className="text-gray-600">{subscription.billingCycle} billing</p>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold">
-            ${subscription.plan.price}
-          </div>
+          <div className="text-2xl font-bold">${subscription.plan.price}</div>
           <div className="text-sm text-gray-500">
             per {subscription.billingCycle}
           </div>
@@ -61,8 +59,11 @@ export const SubscriptionDetails = () => {
             <div className="text-sm text-gray-600">Next payment</div>
             <div className="font-medium">
               {subscription.paymentDetails?.nextPaymentDate
-                ? format(new Date(subscription.paymentDetails.nextPaymentDate), 'MMM dd, yyyy')
-                : 'Not available'}
+                ? format(
+                    new Date(subscription.paymentDetails.nextPaymentDate),
+                    "MMM dd, yyyy",
+                  )
+                : "Not available"}
             </div>
           </div>
         </div>
@@ -72,7 +73,8 @@ export const SubscriptionDetails = () => {
           <div>
             <div className="text-sm text-gray-600">Subscription period</div>
             <div className="font-medium">
-              {format(new Date(subscription.startDate), 'MMM dd, yyyy')} - {format(new Date(subscription.endDate), 'MMM dd, yyyy')}
+              {format(new Date(subscription.startDate), "MMM dd, yyyy")} -{" "}
+              {format(new Date(subscription.endDate), "MMM dd, yyyy")}
             </div>
           </div>
         </div>
@@ -82,7 +84,8 @@ export const SubscriptionDetails = () => {
         <div className="flex items-center p-3 mb-6 bg-yellow-50 rounded-lg">
           <AlertTriangle className="w-5 h-5 text-yellow-500 mr-2" />
           <span className="text-sm text-yellow-700">
-            Your subscription will expire soon. Consider renewing to avoid service interruption.
+            Your subscription will expire soon. Consider renewing to avoid
+            service interruption.
           </span>
         </div>
       )}
@@ -93,8 +96,8 @@ export const SubscriptionDetails = () => {
             Change Plan
           </Button>
         </Link>
-        <Button 
-          variant="destructive" 
+        <Button
+          variant="destructive"
           className="flex-1"
           onClick={handleCancelSubscription}
           isLoading={isCancelling}

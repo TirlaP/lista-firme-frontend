@@ -1,6 +1,11 @@
 // src/components/common/Pagination.tsx
-import { Button } from "@/components/ui/Button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 interface PaginationProps {
   currentPage: number;
@@ -16,7 +21,7 @@ export const Pagination = ({
   isLoading = false,
 }: PaginationProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
+    const value = Number.parseInt(e.target.value);
     if (!isNaN(value)) {
       onPageChange(Math.min(Math.max(1, value), totalPages));
     }

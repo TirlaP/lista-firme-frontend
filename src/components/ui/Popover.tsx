@@ -1,141 +1,31 @@
-import { cn } from "@/utils/cn";
-import React, { useEffect, useRef, useState } from "react";
-import { Portal } from "./Portal";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+import * as React from "react";
 
-interface PopoverProps {
-	trigger: React.ReactNode;
-	content: React.ReactNode;
-	open?: boolean;
-	onOpenChange?: (open: boolean) => void;
-	align?: "start" | "center" | "end";
-	className?: string;
-}
+import { cn } from "@/lib/utils";
 
-export const Popover: React.FC<PopoverProps> = ({
-	trigger,
-	content,
-	open: controlledOpen,
-	onOpenChange,
-	align = "center",
-	className,
-}) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const triggerRef = useRef<HTMLDivElement>(null);
-	const contentRef = useRef<HTMLDivElement>(null);
+const Popover = PopoverPrimitive.Root;
 
-	const open = controlledOpen ?? isOpen;
-	const setOpen = onOpenChange ?? setIsOpen;
+const PopoverTrigger = PopoverPrimitive.Trigger;
 
-	const updatePosition = () => {
-		if (!triggerRef.current || !contentRef.current) return;
+const PopoverAnchor = PopoverPrimitive.Anchor;
 
-		const triggerRect = triggerRef.current.getBoundingClientRect();
-		const contentRect = contentRef.current.getBoundingClientRect();
+const PopoverContent = React.forwardRef<
+  React.ElementRef<typeof PopoverPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
+>(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+  <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Content
+      ref={ref}
+      align={align}
+      sideOffset={sideOffset}
+      className={cn(
+        "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-popover-content-transform-origin]",
+        className,
+      )}
+      {...props}
+    />
+  </PopoverPrimitive.Portal>
+));
+PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-		let left = 0;
-		if (align === "start") {
-			left = triggerRect.left;
-		} else if (align === "center") {
-			left = triggerRect.left + (triggerRect.width - contentRect.width) / 2;
-		} else {
-			left = triggerRect.right - contentRect.width;
-		}
-
-		// Adjust if content would overflow viewport
-		const rightOverflow = left + contentRect.width - window.innerWidth;
-		if (rightOverflow > 0) {
-			left = Math.max(0, left - rightOverflow - 8);
-		}
-		if (left < 0) {
-			left = 8;
-		}
-
-		let top = triggerRect.bottom + window.scrollY + 4;
-
-		// Check if the content would overflow the bottom of the viewport
-		const bottomOverflow =
-			top + contentRect.height - (window.innerHeight + window.scrollY);
-		if (bottomOverflow > 0) {
-			// Position above the trigger if there's not enough space below
-			top = Math.max(
-				window.scrollY + 8,
-				triggerRect.top + window.scrollY - contentRect.height - 4
-			);
-		}
-
-		contentRef.current.style.position = "absolute";
-		contentRef.current.style.left = `${left}px`;
-		contentRef.current.style.top = `${top}px`;
-	};
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				triggerRef.current &&
-				!triggerRef.current.contains(event.target as Node) &&
-				contentRef.current &&
-				!contentRef.current.contains(event.target as Node)
-			) {
-				setOpen(false);
-			}
-		};
-
-		const handleScroll = () => {
-			if (open) {
-				updatePosition();
-			}
-		};
-
-		const handleResize = () => {
-			if (open) {
-				updatePosition();
-			}
-		};
-
-		if (open) {
-			document.addEventListener("mousedown", handleClickOutside);
-			window.addEventListener("scroll", handleScroll, true);
-			window.addEventListener("resize", handleResize);
-
-			// Update position after a small delay to ensure content is rendered
-			setTimeout(updatePosition, 0);
-		}
-
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-			window.removeEventListener("scroll", handleScroll, true);
-			window.removeEventListener("resize", handleResize);
-		};
-	}, [open, setOpen]);
-
-	const handleTriggerClick = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		setOpen(!open);
-	};
-
-	return (
-		<>
-			<div
-				ref={triggerRef}
-				onClick={handleTriggerClick}
-				className="inline-block"
-			>
-				{trigger}
-			</div>
-			{open && (
-				<Portal>
-					<div
-						ref={contentRef}
-						className={cn(
-							"fixed z-[9999] rounded-md border border-gray-200 bg-white shadow-lg",
-							className
-						)}
-						onClick={(e) => e.stopPropagation()}
-					>
-						{content}
-					</div>
-				</Portal>
-			)}
-		</>
-	);
-};
+export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor };

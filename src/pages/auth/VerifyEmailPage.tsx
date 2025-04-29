@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams, Navigate } from "react-router-dom";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { Navigate, useSearchParams } from "react-router-dom";
 
 export const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,7 +12,7 @@ export const VerifyEmailPage = () => {
     queryKey: ["verifyEmail", token],
     queryFn: () => verifyEmail(token as string),
     enabled: !!token,
-    retry: false
+    retry: false,
   });
 
   if (!token) {
@@ -41,7 +41,8 @@ export const VerifyEmailPage = () => {
               Email Verified Successfully!
             </h2>
             <p className="mt-2 text-gray-600">
-              Your email has been verified. You can now use all features of your account.
+              Your email has been verified. You can now use all features of your
+              account.
             </p>
             <a
               href="/login"
@@ -59,7 +60,8 @@ export const VerifyEmailPage = () => {
               Verification Failed
             </h2>
             <p className="mt-2 text-gray-600">
-              We couldn't verify your email. The link may have expired or is invalid.
+              We couldn't verify your email. The link may have expired or is
+              invalid.
             </p>
             <div className="mt-6 space-y-3">
               <button

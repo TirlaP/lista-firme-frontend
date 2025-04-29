@@ -1,6 +1,11 @@
-export type SubscriptionPlanType = 'free' | 'basic' | 'premium' | 'enterprise';
-export type SubscriptionStatus = 'active' | 'canceled' | 'expired' | 'pending' | 'none';
-export type BillingCycle = 'monthly' | 'yearly';
+export type SubscriptionPlanType = "free" | "basic" | "premium" | "enterprise";
+export type SubscriptionStatus =
+  | "active"
+  | "canceled"
+  | "expired"
+  | "pending"
+  | "none";
+export type BillingCycle = "monthly" | "yearly";
 
 export interface SubscriptionFeatures {
   companiesPerMonth: number;

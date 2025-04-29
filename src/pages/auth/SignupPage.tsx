@@ -1,10 +1,8 @@
 import { SignupForm } from "@/components/auth/SignupForm";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { Card, Typography, Space } from "antd";
-import { Navigate } from "react-router-dom";
 import { Building2 } from "lucide-react";
-
-const { Title, Text } = Typography;
+import { Navigate } from "react-router-dom";
 
 export const SignupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -18,21 +16,21 @@ export const SignupPage = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <Building2 className="h-12 w-12 mx-auto text-blue-600" />
-          <Title level={2} className="mt-6">
-            Create your account
-          </Title>
-          <Text type="secondary">
+          <h2 className="text-3xl font-bold mt-6">Create your account</h2>
+          <p className="text-gray-500">
             Get access to the largest Romanian companies database
-          </Text>
+          </p>
         </div>
 
-        <Space direction="vertical" size="large" className="w-full">
+        <div className="space-y-6 w-full">
           <Card>
-            <SignupForm />
+            <CardContent className="pt-6">
+              <SignupForm />
+            </CardContent>
           </Card>
 
           <div className="text-center">
-            <Text type="secondary" className="text-xs">
+            <p className="text-xs text-gray-500">
               By creating an account, you agree to our{" "}
               <a href="/terms" className="text-blue-600 hover:text-blue-500">
                 Terms of Service
@@ -41,9 +39,9 @@ export const SignupPage = () => {
               <a href="/privacy" className="text-blue-600 hover:text-blue-500">
                 Privacy Policy
               </a>
-            </Text>
+            </p>
           </div>
-        </Space>
+        </div>
       </div>
     </div>
   );

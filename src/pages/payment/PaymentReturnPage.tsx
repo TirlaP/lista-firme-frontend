@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { subscriptionService } from "@/services/subscription.service";
 import { AlertCircle, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export const PaymentReturnPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -47,8 +49,12 @@ export const PaymentReturnPage = () => {
         {status === "loading" && (
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-            <h2 className="mt-4 text-xl font-semibold">Processing payment...</h2>
-            <p className="mt-2 text-gray-600">Please wait while we verify your payment</p>
+            <h2 className="mt-4 text-xl font-semibold">
+              Processing payment...
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Please wait while we verify your payment
+            </p>
           </div>
         )}
 
@@ -57,9 +63,13 @@ export const PaymentReturnPage = () => {
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
               <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-green-600">Payment Successful!</h2>
+            <h2 className="mt-4 text-xl font-semibold text-green-600">
+              Payment Successful!
+            </h2>
             <p className="mt-2 text-gray-600">{message}</p>
-            <p className="mt-2 text-sm text-gray-500">Redirecting to dashboard...</p>
+            <p className="mt-2 text-sm text-gray-500">
+              Redirecting to dashboard...
+            </p>
           </div>
         )}
 
@@ -68,7 +78,9 @@ export const PaymentReturnPage = () => {
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
               <AlertCircle className="h-6 w-6 text-red-600" />
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-red-600">Payment Failed</h2>
+            <h2 className="mt-4 text-xl font-semibold text-red-600">
+              Payment Failed
+            </h2>
             <p className="mt-2 text-gray-600">{message}</p>
             <div className="mt-6 space-y-3">
               <Button

@@ -1,25 +1,29 @@
-import { latestCompaniesService } from "@/services/latest-companies.service";
-import { LatestCompanyStats } from "@/types/latest-companies.types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client";
+import { GET_LATEST_COMPANIES_STATS } from "@/graphql/queries";
+import { TimeRange } from "@/graphql/types";
 
-export const useLatestCompaniesStats = (
-	timeRange: string,
-	customStartDate?: string,
-	customEndDate?: string
-) => {
-	return useQuery<LatestCompanyStats>({
-		queryKey: [
-			"latest-companies-stats",
-			timeRange,
-			customStartDate,
-			customEndDate,
-		],
-		queryFn: () =>
-			latestCompaniesService.getLatestStats(
-				timeRange,
-				customStartDate,
-				customEndDate
-			),
-		staleTime: 5 * 60 * 1000, // 5 minutes
-	});
-};
+/**
+ * Simple hook for fetching latest companies statistics
+ */
+export function useLatestCompaniesStats(
+  timeRange?: string,
+  customStartDate?: string,
+  customEndDate?: string
+) {
+  // Build query input
+  const input = customStartDate && customEndDate
+    ? { customStartDate, customEndDate }
+    : { timeRange: timeRange as TimeRange || TimeRange.LAST7DAYS };
+  
+  // Execute query
+  const { data, loading, error } = useQuery(GET_LATEST_COMPANIES_STATS, {
+    variables: { input },
+    fetchPolicy: "cache-and-network",
+  });
+  
+  return {
+    data: data?.latestCompaniesStats,
+    isLoading: loading,
+    error,
+  };
+}

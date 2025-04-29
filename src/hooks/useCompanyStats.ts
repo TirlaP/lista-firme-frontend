@@ -1,16 +1,23 @@
-// src/hooks/useCompanyStats.ts
-import { useQuery } from '@apollo/client';
-import { GET_COMPANY_STATS } from '../graphql/queries';
-import { GetCompanyStatsQueryResult } from '../graphql/types';
+import { useCompanyStatsQuery } from "@/hooks/queries/useCompaniesStatsQuery";
 
-export const useCompanyStats = () => {
-  const { data, loading, error } = useQuery<GetCompanyStatsQueryResult>(
-    GET_COMPANY_STATS
-  );
-
+/**
+ * Custom hook for fetching overall company statistics
+ * Backed by React Query for improved caching
+ */
+export function useCompanyStats() {
+  const { 
+    data, 
+    isLoading, 
+    isError, 
+    error,
+    refetch
+  } = useCompanyStatsQuery();
+  
   return {
     stats: data?.companyStats,
-    isLoading: loading,
+    isLoading,
+    isError,
     error,
+    refetch,
   };
-};
+}

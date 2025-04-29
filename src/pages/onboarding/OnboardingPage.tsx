@@ -1,8 +1,8 @@
 import { useAuth } from "@/hooks/useAuth";
+import { motion } from "framer-motion";
+import { Award, Building2, FileSpreadsheet, Search } from "lucide-react";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Building2, Search, FileSpreadsheet, Award } from "lucide-react";
 
 const steps = [
   {
@@ -48,7 +48,10 @@ export const OnboardingPage = () => {
     }
   };
 
-  const Step = ({ step, index }: { step: typeof steps[0]; index: number }) => {
+  const Step = ({
+    step,
+    index,
+  }: { step: (typeof steps)[0]; index: number }) => {
     const Icon = step.icon;
     return (
       <motion.div

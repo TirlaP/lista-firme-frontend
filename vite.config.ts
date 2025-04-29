@@ -4,21 +4,22 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
-  base: '/', // Add this for proper asset paths in production
+  base: "/", // Add this for proper asset paths in production
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {  // Add build configuration
-    outDir: 'dist',
-    assetsDir: 'assets',
+  build: {
+    // Add build configuration
+    outDir: "dist",
+    assetsDir: "assets",
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: undefined
-      }
-    }
+        manualChunks: undefined,
+      },
+    },
   },
   server: {
     proxy: {

@@ -1,12 +1,12 @@
-import { useLazyQuery } from "@apollo/client";
 import { AUTOCOMPLETE_QUERY } from "@/graphql/queries";
-import { useState, useEffect } from "react";
+import { useLazyQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 
 export function useAutocomplete() {
   const [text, setText] = useState("");
   const [fetchAutocomplete, { data, loading, error }] = useLazyQuery(
     AUTOCOMPLETE_QUERY,
-    { fetchPolicy: "network-only" }
+    { fetchPolicy: "network-only" },
   );
 
   useEffect(() => {

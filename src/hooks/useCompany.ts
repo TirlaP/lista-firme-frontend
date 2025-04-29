@@ -1,7 +1,7 @@
 // src/hooks/useCompany.ts
-import { useQuery } from '@apollo/client';
-import { GET_COMPANY } from '../graphql/queries';
-import { GetCompanyQueryResult } from '../graphql/types';
+import { useQuery } from "@apollo/client";
+import { GET_COMPANY } from "../graphql/queries";
+import type { GetCompanyQueryResult } from "../graphql/types";
 
 export const useCompany = (cui: number) => {
   const { data, loading, error } = useQuery<GetCompanyQueryResult>(
@@ -9,7 +9,7 @@ export const useCompany = (cui: number) => {
     {
       variables: { cui },
       skip: !cui,
-    }
+    },
   );
 
   return {
@@ -18,4 +18,3 @@ export const useCompany = (cui: number) => {
     error,
   };
 };
-

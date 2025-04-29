@@ -1,93 +1,32 @@
-// src/components/ui/Tooltip.tsx
-import {
-	FloatingPortal,
-	arrow,
-	autoUpdate,
-	flip,
-	offset,
-	shift,
-	useDismiss,
-	useFloating,
-	useFocus,
-	useHover,
-	useInteractions,
-	useRole,
-	useTransitionStyles,
-} from "@floating-ui/react";
+"use client";
+
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import * as React from "react";
 
-interface TooltipProps {
-	content: React.ReactNode;
-	children: React.ReactNode;
-	side?: "top" | "right" | "bottom" | "left";
-	align?: "start" | "center" | "end";
-}
+import { cn } from "@/lib/utils";
 
-export const Tooltip = ({
-	children,
-	content,
-	side = "top",
-	align = "center",
-}: TooltipProps) => {
-	const [isOpen, setIsOpen] = React.useState(false);
-	const arrowRef = React.useRef(null);
+const TooltipProvider = TooltipPrimitive.Provider;
 
-	const { x, y, refs, strategy, context } = useFloating({
-		open: isOpen,
-		onOpenChange: setIsOpen,
-		placement: `${side}-${align}` as any,
-		middleware: [offset(8), flip(), shift(), arrow({ element: arrowRef })],
-		whileElementsMounted: autoUpdate,
-	});
+const Tooltip = TooltipPrimitive.Root;
 
-	const { getReferenceProps, getFloatingProps } = useInteractions([
-		useHover(context, { move: false, delay: { open: 100, close: 150 } }),
-		useFocus(context),
-		useRole(context, { role: "tooltip" }),
-		useDismiss(context),
-	]);
+const TooltipTrigger = TooltipPrimitive.Trigger;
 
-	const { isMounted, styles } = useTransitionStyles(context, {
-		initial: {
-			opacity: 0,
-			transform: "scale(0.95)",
-		},
-		open: {
-			opacity: 1,
-			transform: "scale(1)",
-		},
-		close: {
-			opacity: 0,
-			transform: "scale(0.95)",
-		},
-	});
+const TooltipContent = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      className={cn(
+        "z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-tooltip-content-transform-origin]",
+        className,
+      )}
+      {...props}
+    />
+  </TooltipPrimitive.Portal>
+));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-	return (
-		<>
-			<div ref={refs.setReference} {...getReferenceProps()}>
-				{children}
-			</div>
-			{isMounted && (
-				<FloatingPortal>
-					<div
-						ref={refs.setFloating}
-						className="z-50"
-						style={{
-							position: strategy,
-							top: y ?? 0,
-							left: x ?? 0,
-							...styles,
-						}}
-						{...getFloatingProps()}
-					>
-						<div className="bg-gray-900 text-white rounded-md shadow-lg p-2 text-sm max-w-sm">
-							<div ref={arrowRef} />
-							{content}
-						</div>
-					</div>
-				</FloatingPortal>
-			)}
-		</>
-	);
-};
-
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

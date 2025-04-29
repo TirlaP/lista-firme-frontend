@@ -1,16 +1,27 @@
-import { AuthResponse, LoginCredentials, SignupFormData, User } from "@/types/auth.types";
-import { apiClient } from "@/utils/apiClient";
+import { apiClient } from "@/services/apiClient";
+import type {
+  AuthResponse,
+  LoginCredentials,
+  SignupFormData,
+  User,
+} from "@/types/auth.types";
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const { data } = await apiClient.post<AuthResponse>("/auth/login", credentials);
+    const { data } = await apiClient.post<AuthResponse>(
+      "/auth/login",
+      credentials,
+    );
     localStorage.setItem("accessToken", data.tokens.access.token);
     localStorage.setItem("refreshToken", data.tokens.refresh.token);
     return data;
   },
 
   async register(userData: SignupFormData): Promise<AuthResponse> {
-    const { data } = await apiClient.post<AuthResponse>("/auth/register", userData);
+    const { data } = await apiClient.post<AuthResponse>(
+      "/auth/register",
+      userData,
+    );
     return data;
   },
 
@@ -32,9 +43,12 @@ export const authService = {
     const refreshToken = localStorage.getItem("refreshToken");
     if (!refreshToken) throw new Error("No refresh token available");
 
-    const { data } = await apiClient.post<{ token: string }>("/auth/refresh-tokens", {
-      refreshToken,
-    });
+    const { data } = await apiClient.post<{ token: string }>(
+      "/auth/refresh-tokens",
+      {
+        refreshToken,
+      },
+    );
 
     localStorage.setItem("accessToken", data.token);
     return data.token;
@@ -55,9 +69,10 @@ export const authService = {
   },
 
   async resetPassword(token: string, password: string): Promise<void> {
-    await apiClient.post("/auth/reset-password", 
+    await apiClient.post(
+      "/auth/reset-password",
       { password },
-      { params: { token } }
+      { params: { token } },
     );
   },
 

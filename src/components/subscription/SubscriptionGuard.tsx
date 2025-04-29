@@ -23,7 +23,11 @@ export const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({
   }
 
   // If no subscription is required (free features) or user has an active subscription
-  if (!requiredFeature || (subscription?.status === "active" && subscription.plan.features[requiredFeature])) {
+  if (
+    !requiredFeature ||
+    (subscription?.status === "active" &&
+      subscription.plan.features[requiredFeature])
+  ) {
     return <>{children}</>;
   }
 

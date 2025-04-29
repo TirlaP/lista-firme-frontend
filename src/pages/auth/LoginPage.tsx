@@ -1,10 +1,9 @@
 import { LoginForm } from "@/components/auth/LoginForm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { Card, Typography, Space, Alert } from "antd";
-import { Navigate, useSearchParams } from "react-router-dom";
 import { Building2 } from "lucide-react";
-
-const { Title, Text } = Typography;
+import { Navigate, useSearchParams } from "react-router-dom";
 
 export const LoginPage = () => {
   const { isAuthenticated } = useAuth();
@@ -13,7 +12,8 @@ export const LoginPage = () => {
   const reset = searchParams.get("reset");
 
   if (isAuthenticated) {
-    return <Navigate to="/companies" replace />;
+    console.log("AAaaa")
+    return <Navigate to="/firme" replace />;
   }
 
   return (
@@ -21,39 +21,38 @@ export const LoginPage = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <Building2 className="h-12 w-12 mx-auto text-blue-600" />
-          <Title level={2} className="mt-6">
-            Sign in to your account
-          </Title>
-          <Text type="secondary">
+          <h2 className="text-3xl font-bold mt-6">Sign in to your account</h2>
+          <p className="text-gray-500">
             Access Romania's largest companies database
-          </Text>
+          </p>
         </div>
 
-        <Space direction="vertical" size="large" className="w-full">
+        <div className="space-y-6 w-full">
           {verified && (
-            <Alert
-              message="Email Verified Successfully"
-              description="Your email has been verified. You can now sign in."
-              type="success"
-              showIcon
-            />
+            <Alert className="border-green-500 bg-green-50">
+              <AlertDescription>
+                Your email has been verified. You can now sign in.
+              </AlertDescription>
+            </Alert>
           )}
 
           {reset && (
-            <Alert
-              message="Password Reset Successfully"
-              description="Your password has been reset. You can now sign in with your new password."
-              type="success"
-              showIcon
-            />
+            <Alert className="border-green-500 bg-green-50">
+              <AlertDescription>
+                Your password has been reset. You can now sign in with your new
+                password.
+              </AlertDescription>
+            </Alert>
           )}
 
           <Card>
-            <LoginForm />
+            <CardContent className="pt-6">
+              <LoginForm />
+            </CardContent>
           </Card>
 
           <div className="text-center">
-            <Text type="secondary" className="text-xs">
+            <p className="text-xs text-gray-500">
               By signing in, you agree to our{" "}
               <a href="/terms" className="text-blue-600 hover:text-blue-500">
                 Terms of Service
@@ -62,9 +61,9 @@ export const LoginPage = () => {
               <a href="/privacy" className="text-blue-600 hover:text-blue-500">
                 Privacy Policy
               </a>
-            </Text>
+            </p>
           </div>
-        </Space>
+        </div>
       </div>
     </div>
   );

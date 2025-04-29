@@ -1,5 +1,5 @@
 // src/types/location.types.ts
-export type LocationType = 'county' | 'city' | 'municipality' | 'sector';
+export type LocationType = "county" | "city" | "municipality" | "sector";
 
 export interface LocationResponse {
   _id?: string;
@@ -24,4 +24,4 @@ export type ComboBoxOption = {
   value: string;
   label: string;
   details?: Record<string, string>;
-}
+};

@@ -1,7 +1,7 @@
+import { Progress } from "@/components/ui/Progress";
+import { Card } from "@/components/ui/card";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSubscriptionUsage } from "@/hooks/useSubscriptionUsage";
-import { Card } from "@/components/ui/Card";
-import { Progress } from "@/components/ui/Progress";
 import { AlertCircle } from "lucide-react";
 
 export const SubscriptionUsageStats = () => {
@@ -16,13 +16,15 @@ export const SubscriptionUsageStats = () => {
     return null;
   }
 
-  const companiesLimit = typeof getFeatureLimit("companiesPerMonth") === 'number' 
-    ? getFeatureLimit("companiesPerMonth") as number 
-    : 0;
-    
-  const exportsLimit = typeof getFeatureLimit("exportsPerMonth") === 'number'
-    ? getFeatureLimit("exportsPerMonth") as number
-    : 0;
+  const companiesLimit =
+    typeof getFeatureLimit("companiesPerMonth") === "number"
+      ? (getFeatureLimit("companiesPerMonth") as number)
+      : 0;
+
+  const exportsLimit =
+    typeof getFeatureLimit("exportsPerMonth") === "number"
+      ? (getFeatureLimit("exportsPerMonth") as number)
+      : 0;
 
   const companiesPercentage = (usage.companiesViewed / companiesLimit) * 100;
   const exportsPercentage = (usage.exportsCount / exportsLimit) * 100;
@@ -42,8 +44,8 @@ export const SubscriptionUsageStats = () => {
             {usage.companiesViewed} / {companiesLimit}
           </span>
         </div>
-        <Progress 
-          value={companiesPercentage} 
+        <Progress
+          value={companiesPercentage}
           className={getColorByPercentage(companiesPercentage)}
         />
         {companiesPercentage >= 90 && (
@@ -61,8 +63,8 @@ export const SubscriptionUsageStats = () => {
             {usage.exportsCount} / {exportsLimit}
           </span>
         </div>
-        <Progress 
-          value={exportsPercentage} 
+        <Progress
+          value={exportsPercentage}
           className={getColorByPercentage(exportsPercentage)}
         />
         {exportsPercentage >= 90 && (
